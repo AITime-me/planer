@@ -29,13 +29,15 @@
           <label>Дата</label>
           <input type="date" name="date" required>
         </div>
-        <div class="form-row">
-          <label>Время с</label>
-          <input type="time" name="timeFrom">
-        </div>
-        <div class="form-row">
-          <label>Время до</label>
-          <input type="time" name="timeTo">
+        <div class="form-row-group">
+          <div class="form-row">
+            <label>Время с</label>
+            <input type="time" name="timeFrom">
+          </div>
+          <div class="form-row">
+            <label>Время до</label>
+            <input type="time" name="timeTo">
+          </div>
         </div>
         <div class="form-row">
           <label>Приоритет</label>
@@ -67,13 +69,15 @@
           <label>Дедлайн</label>
           <input type="date" name="date" required>
         </div>
-        <div class="form-row">
-          <label>Время с</label>
-          <input type="time" name="timeFrom">
-        </div>
-        <div class="form-row">
-          <label>Время до</label>
-          <input type="time" name="timeTo">
+        <div class="form-row-group">
+          <div class="form-row">
+            <label>Время с</label>
+            <input type="time" name="timeFrom">
+          </div>
+          <div class="form-row">
+            <label>Время до</label>
+            <input type="time" name="timeTo">
+          </div>
         </div>
         <div class="form-row">
           <label>Приоритет</label>
@@ -94,12 +98,14 @@
     </section>
 
     <footer class="theme-switcher">
-      <span>Тема:</span>
-      <button class="theme-btn active" data-theme="light">Светлая</button>
-      <button class="theme-btn" data-theme="dark">Тёмная</button>
-      <button class="theme-btn" data-theme="beige">Бежевая</button>
-      <button class="theme-btn" data-theme="olive">Оливковая</button>
-      <button class="theme-btn" data-theme="blue">Синяя</button>
+      <span class="theme-switcher-label">Тема</span>
+      <div class="theme-buttons">
+        <button class="theme-btn active" data-theme="light">Светлая</button>
+        <button class="theme-btn" data-theme="dark">Тёмная</button>
+        <button class="theme-btn" data-theme="beige">Бежевая</button>
+        <button class="theme-btn" data-theme="olive">Оливковая</button>
+        <button class="theme-btn" data-theme="blue">Синяя</button>
+      </div>
     </footer>
   </div>
 
