@@ -1,0 +1,17 @@
+{
+  "name": "task-planner",
+  "version": "1.0.0",
+  "description": "Простое приложение «Список задач» с двумя вкладками и темами оформления",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve . -p 3000",
+    "dev": "npm run start"
+  },
+  "keywords": [
+    "tasks",
+    "todo",
+    "planner",
+    "planner-app"
+  ],
+  "license": "MIT"
+}

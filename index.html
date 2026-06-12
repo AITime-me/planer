@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список задач</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Список задач</h1>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="current">Текущие задачи</button>
+      <button class="tab" data-tab="future">План на будущее</button>
+    </nav>
+
+    <!-- Вкладка: Текущие задачи -->
+    <section id="current" class="tab-content active">
+      <form id="form-current" class="task-form">
+        <h2>Добавить задачу</h2>
+        <div class="form-row">
+          <label>Название</label>
+          <input type="text" name="title" required placeholder="Название задачи">
+        </div>
+        <div class="form-row">
+          <label>Дата</label>
+          <input type="date" name="date" required>
+        </div>
+        <div class="form-row">
+          <label>Время с</label>
+          <input type="time" name="timeFrom">
+        </div>
+        <div class="form-row">
+          <label>Время до</label>
+          <input type="time" name="timeTo">
+        </div>
+        <div class="form-row">
+          <label>Приоритет</label>
+          <select name="priority" required>
+            <option value="red">Важно и срочно</option>
+            <option value="green">Важно, но не срочно</option>
+            <option value="yellow">Не важно и не срочно</option>
+            <option value="blue">Срочно, но не важно</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-add">Добавить</button>
+      </form>
+
+      <div class="task-list" id="list-current">
+        <h2>Задачи</h2>
+        <div id="tasks-current" class="tasks"></div>
+      </div>
+    </section>
+
+    <!-- Вкладка: План на будущее -->
+    <section id="future" class="tab-content">
+      <form id="form-future" class="task-form">
+        <h2>Добавить задачу</h2>
+        <div class="form-row">
+          <label>Название</label>
+          <input type="text" name="title" required placeholder="Название задачи">
+        </div>
+        <div class="form-row">
+          <label>Дедлайн</label>
+          <input type="date" name="date" required>
+        </div>
+        <div class="form-row">
+          <label>Время с</label>
+          <input type="time" name="timeFrom">
+        </div>
+        <div class="form-row">
+          <label>Время до</label>
+          <input type="time" name="timeTo">
+        </div>
+        <div class="form-row">
+          <label>Приоритет</label>
+          <select name="priority" required>
+            <option value="red">Важно и срочно</option>
+            <option value="green">Важно, но не срочно</option>
+            <option value="yellow">Не важно и не срочно</option>
+            <option value="blue">Срочно, но не важно</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-add">Добавить</button>
+      </form>
+
+      <div class="task-list" id="list-future">
+        <h2>Задачи</h2>
+        <div id="tasks-future" class="tasks"></div>
+      </div>
+    </section>
+
+    <footer class="theme-switcher">
+      <span>Тема:</span>
+      <button class="theme-btn active" data-theme="light">Светлая</button>
+      <button class="theme-btn" data-theme="dark">Тёмная</button>
+      <button class="theme-btn" data-theme="beige">Бежевая</button>
+      <button class="theme-btn" data-theme="olive">Оливковая</button>
+      <button class="theme-btn" data-theme="blue">Синяя</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
