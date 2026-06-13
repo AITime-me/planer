@@ -399,10 +399,48 @@ header h1 {
   font-size: 0.75rem;
   padding: 4px 8px;
   border-radius: 4px;
-  margin-top: 6px;
   max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.task-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: center;
+}
+
+.task-overdue-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #c62828;
+  color: #fff;
+  font-weight: 600;
+}
+
+.task-item.task-overdue {
+  border: 2px solid #c62828;
+  background: #ffebee;
+  box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.15);
+}
+
+.task-item.task-overdue.priority-red { border-left-color: #c62828; }
+.task-item.task-overdue.priority-green { border-left-color: #c62828; }
+.task-item.task-overdue.priority-yellow { border-left-color: #c62828; }
+.task-item.task-overdue.priority-blue { border-left-color: #c62828; }
+
+[data-theme="dark"] .task-item.task-overdue {
+  background: #3a2222;
+  border-color: #ef5350;
+}
+
+[data-theme="dark"] .task-overdue-badge {
+  background: #c62828;
+  color: #fff;
 }
 
 .priority-red .task-priority { background: #ffebee; color: #c62828; }

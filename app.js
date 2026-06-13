@@ -23,6 +23,8 @@ function loadData() {
     tasks = JSON.parse(saved);
   }
   normalizeTasks();
+  promoteFutureTasks();
+  saveData();
 
   const theme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
@@ -58,6 +60,65 @@ function normalizeTasks() {
 
 function saveData() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function getTodayDateStr() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function daysUntilDate(dateStr) {
+  const today = new Date(getTodayDateStr() + 'T00:00:00');
+  const target = new Date(dateStr + 'T00:00:00');
+  const diffMs = target - today;
+  return Math.round(diffMs / (1000 * 60 * 60 * 24));
+}
+
+function isTaskOverdue(task) {
+  return !task.completed && task.date < getTodayDateStr();
+}
+
+function promoteFutureTasks() {
+  const toMove = [];
+  const remaining = [];
+
+  tasks.future.forEach(task => {
+    if (daysUntilDate(task.date) <= 14) {
+      toMove.push(task);
+    } else {
+      remaining.push(task);
+    }
+  });
+
+  if (toMove.length === 0) {
+    return false;
+  }
+
+  tasks.future = remaining;
+  const currentIds = new Set(tasks.current.map(task => task.id));
+
+  toMove.forEach(task => {
+    if (!currentIds.has(task.id)) {
+      tasks.current.push({
+        ...task,
+        dayOfWeek: getDayOfWeek(task.date)
+      });
+      currentIds.add(task.id);
+    }
+  });
+
+  sortTasks(tasks.current);
+  return true;
+}
+
+function refreshAllTasks() {
+  promoteFutureTasks();
+  saveData();
+  renderTasks('current');
+  renderTasks('future');
 }
 
 function getDayOfWeek(dateStr) {
@@ -205,8 +266,7 @@ function buildTaskFromForm(form, type, timeFrom, timeTo) {
 function addTask(type, task) {
   tasks[type].push(task);
   sortTasks(tasks[type]);
-  saveData();
-  renderTasks(type);
+  refreshAllTasks();
 }
 
 function updateTask(type, task) {
@@ -214,8 +274,7 @@ function updateTask(type, task) {
   if (index === -1) return;
   tasks[type][index] = task;
   sortTasks(tasks[type]);
-  saveData();
-  renderTasks(type);
+  refreshAllTasks();
 }
 
 function deleteTask(type, id) {
@@ -289,9 +348,10 @@ function startEdit(type, task) {
 
 function renderTaskItem(task, type) {
   const timeStr = formatTime(task.timeFrom, task.timeTo);
+  const overdue = isTaskOverdue(task);
 
   const div = document.createElement('div');
-  div.className = `task-item priority-${task.priority}${task.completed ? ' task-completed' : ''}`;
+  div.className = `task-item priority-${task.priority}${task.completed ? ' task-completed' : ''}${overdue ? ' task-overdue' : ''}`;
 
   div.innerHTML = `
     <label class="task-done-label">
@@ -303,7 +363,10 @@ function renderTaskItem(task, type) {
       <div class="task-meta">
         ${timeStr ? 'Время: ' + timeStr : 'Без указания времени'}
       </div>
-      <span class="task-priority">${PRIORITY_LABELS[task.priority]}</span>
+      <div class="task-badges">
+        ${overdue ? '<span class="task-overdue-badge">Просрочено</span>' : ''}
+        <span class="task-priority">${PRIORITY_LABELS[task.priority]}</span>
+      </div>
     </div>
     <div class="task-actions">
       <button type="button" class="btn-edit">Редактировать</button>
