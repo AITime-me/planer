@@ -19,8 +19,8 @@
 
     <!-- Вкладка: Текущие задачи -->
     <section id="current" class="tab-content active">
-      <form id="form-current" class="task-form">
-        <h2>Добавить задачу</h2>
+      <form id="form-current" class="task-form" data-type="current">
+        <h2 class="form-title">Добавить задачу</h2>
         <div class="form-row">
           <label>Название</label>
           <input type="text" name="title" required placeholder="Название задачи">
@@ -29,15 +29,20 @@
           <label>Дата</label>
           <input type="date" name="date" required>
         </div>
-        <div class="form-row-group">
-          <div class="form-row">
-            <label>Время с</label>
-            <input type="time" name="timeFrom">
+        <div class="time-block">
+          <div class="form-row-group">
+            <div class="form-row">
+              <label>Время с</label>
+              <input type="time" name="timeFromDraft">
+            </div>
+            <div class="form-row">
+              <label>Время до</label>
+              <input type="time" name="timeToDraft">
+            </div>
           </div>
-          <div class="form-row">
-            <label>Время до</label>
-            <input type="time" name="timeTo">
-          </div>
+          <button type="button" class="btn-time-ok">ОК</button>
+          <p class="time-display" hidden></p>
+          <p class="time-error" hidden role="alert"></p>
         </div>
         <div class="form-row">
           <label>Приоритет</label>
@@ -48,7 +53,10 @@
             <option value="blue">Срочно, но не важно</option>
           </select>
         </div>
-        <button type="submit" class="btn-add">Добавить</button>
+        <div class="form-actions">
+          <button type="submit" class="btn-add">Добавить</button>
+          <button type="button" class="btn-cancel" hidden>Отмена</button>
+        </div>
       </form>
 
       <div class="task-list" id="list-current">
@@ -59,8 +67,8 @@
 
     <!-- Вкладка: План на будущее -->
     <section id="future" class="tab-content">
-      <form id="form-future" class="task-form">
-        <h2>Добавить задачу</h2>
+      <form id="form-future" class="task-form" data-type="future">
+        <h2 class="form-title">Добавить задачу</h2>
         <div class="form-row">
           <label>Название</label>
           <input type="text" name="title" required placeholder="Название задачи">
@@ -69,15 +77,20 @@
           <label>Дедлайн</label>
           <input type="date" name="date" required>
         </div>
-        <div class="form-row-group">
-          <div class="form-row">
-            <label>Время с</label>
-            <input type="time" name="timeFrom">
+        <div class="time-block">
+          <div class="form-row-group">
+            <div class="form-row">
+              <label>Время с</label>
+              <input type="time" name="timeFromDraft">
+            </div>
+            <div class="form-row">
+              <label>Время до</label>
+              <input type="time" name="timeToDraft">
+            </div>
           </div>
-          <div class="form-row">
-            <label>Время до</label>
-            <input type="time" name="timeTo">
-          </div>
+          <button type="button" class="btn-time-ok">ОК</button>
+          <p class="time-display" hidden></p>
+          <p class="time-error" hidden role="alert"></p>
         </div>
         <div class="form-row">
           <label>Приоритет</label>
@@ -88,7 +101,10 @@
             <option value="blue">Срочно, но не важно</option>
           </select>
         </div>
-        <button type="submit" class="btn-add">Добавить</button>
+        <div class="form-actions">
+          <button type="submit" class="btn-add">Добавить</button>
+          <button type="button" class="btn-cancel" hidden>Отмена</button>
+        </div>
       </form>
 
       <div class="task-list" id="list-future">

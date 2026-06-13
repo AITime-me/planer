@@ -174,6 +174,70 @@ header h1 {
   margin-bottom: 0;
 }
 
+.time-block {
+  margin-bottom: 12px;
+  min-width: 0;
+}
+
+.time-block .form-row-group {
+  margin-bottom: 10px;
+}
+
+.btn-time-ok {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-time-ok:hover {
+  background: var(--btn-hover);
+}
+
+.time-display {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: var(--accent);
+}
+
+.time-error {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #c62828;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-cancel {
+  width: 100%;
+  min-height: 44px;
+  padding: 12px;
+  background: var(--btn-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-cancel:hover {
+  background: var(--btn-hover);
+}
+
 .form-row label {
   display: block;
   font-size: 0.85rem;
@@ -215,7 +279,7 @@ header h1 {
   width: 100%;
   min-height: 44px;
   padding: 12px;
-  margin-top: 12px;
+  margin-top: 0;
   background: var(--accent);
   color: #fff;
   border: none;
@@ -243,8 +307,28 @@ header h1 {
 .tasks {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   min-width: 0;
+}
+
+.task-group {
+  min-width: 0;
+}
+
+.task-group-header {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  word-wrap: break-word;
+}
+
+.task-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .task-item {
@@ -264,6 +348,34 @@ header h1 {
 .task-item.priority-green { border-left-color: #43a047; }
 .task-item.priority-yellow { border-left-color: #fdd835; }
 .task-item.priority-blue { border-left-color: #1e88e5; }
+
+.task-item.task-completed {
+  opacity: 0.65;
+  background: var(--bg);
+}
+
+.task-item.task-completed .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.task-done-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.task-done-checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 
 .task-info {
   flex: 1;
@@ -304,6 +416,32 @@ header h1 {
 [data-theme="dark"] .priority-green .task-priority { background: #1a3a1a; color: #a5d6a7; }
 [data-theme="dark"] .priority-yellow .task-priority { background: #3a3a1a; color: #fff59d; }
 [data-theme="dark"] .priority-blue .task-priority { background: #1a2a4a; color: #90caf9; }
+
+.task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-edit {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--btn-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-edit:hover {
+  background: var(--btn-hover);
+}
 
 .btn-delete {
   width: 100%;
@@ -418,12 +556,53 @@ header h1 {
 
   .task-item {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: flex-start;
   }
 
+  .task-done-label {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .task-info {
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .task-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+
+  .btn-edit,
   .btn-delete {
     width: auto;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .form-actions {
+    flex-direction: row;
+  }
+
+  .btn-add,
+  .btn-cancel {
+    flex: 1;
+  }
+
+  .btn-time-ok {
+    width: auto;
+    min-width: 100px;
     align-self: flex-start;
+  }
+
+  .time-block {
+    display: flex;
+    flex-direction: column;
   }
 
   .theme-buttons {
