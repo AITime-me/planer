@@ -13,8 +13,8 @@ let tasks = {
 };
 
 const formState = {
-  current: { editingId: null, timeFrom: '', timeTo: '' },
-  future: { editingId: null, timeFrom: '', timeTo: '' }
+  current: { editingId: null },
+  future: { editingId: null }
 };
 
 function loadData() {
@@ -84,7 +84,7 @@ function validateTimeRange(timeFrom, timeTo) {
   if (timeTo < timeFrom) {
     return {
       valid: false,
-      message: 'Время «до» не может быть раньше времени «с». Проверьте интервал и нажмите «ОК».'
+      message: 'Время «до» не может быть раньше времени «с». Проверьте интервал.'
     };
   }
   return { valid: true };
@@ -119,6 +119,8 @@ function groupTasksByDate(taskList) {
 function buildTaskFromForm(form, type) {
   const data = new FormData(form);
   const date = data.get('date');
+  const timeFrom = data.get('timeFrom') || '';
+  const timeTo = data.get('timeTo') || '';
   const state = formState[type];
 
   return {
@@ -126,8 +128,8 @@ function buildTaskFromForm(form, type) {
     title: data.get('title').trim(),
     date,
     dayOfWeek: getDayOfWeek(date),
-    timeFrom: state.timeFrom || '',
-    timeTo: state.timeTo || '',
+    timeFrom,
+    timeTo,
     priority: data.get('priority'),
     completed: state.editingId
       ? Boolean(tasks[type].find(task => task.id === state.editingId)?.completed)
@@ -169,17 +171,6 @@ function toggleTaskComplete(type, id) {
   renderTasks(type);
 }
 
-function updateTimeDisplay(displayEl, timeFrom, timeTo) {
-  const timeStr = formatTime(timeFrom, timeTo);
-  if (timeStr) {
-    displayEl.textContent = `Выбрано время: ${timeStr}`;
-    displayEl.hidden = false;
-  } else {
-    displayEl.textContent = '';
-    displayEl.hidden = true;
-  }
-}
-
 function showTimeError(form, message) {
   const errorEl = form.querySelector('.time-error');
   errorEl.textContent = message;
@@ -210,45 +201,22 @@ function setFormMode(form, type, mode) {
 
 function resetForm(form, type) {
   form.reset();
-  formState[type] = { editingId: null, timeFrom: '', timeTo: '' };
-  updateTimeDisplay(form.querySelector('.time-display'), '', '');
+  formState[type] = { editingId: null };
   hideTimeError(form);
   setFormMode(form, type, 'add');
-}
-
-function confirmTime(form, type) {
-  const draftFrom = form.querySelector('[name="timeFromDraft"]').value;
-  const draftTo = form.querySelector('[name="timeToDraft"]').value;
-  const validation = validateTimeRange(draftFrom, draftTo);
-
-  if (!validation.valid) {
-    showTimeError(form, validation.message);
-    return false;
-  }
-
-  hideTimeError(form);
-  formState[type].timeFrom = draftFrom;
-  formState[type].timeTo = draftTo;
-  updateTimeDisplay(form.querySelector('.time-display'), draftFrom, draftTo);
-  return true;
 }
 
 function startEdit(type, task) {
   const form = document.getElementById(`form-${type}`);
 
-  formState[type] = {
-    editingId: task.id,
-    timeFrom: task.timeFrom || '',
-    timeTo: task.timeTo || ''
-  };
+  formState[type] = { editingId: task.id };
 
   form.querySelector('[name="title"]').value = task.title;
   form.querySelector('[name="date"]').value = task.date;
   form.querySelector('[name="priority"]').value = task.priority;
-  form.querySelector('[name="timeFromDraft"]').value = task.timeFrom || '';
-  form.querySelector('[name="timeToDraft"]').value = task.timeTo || '';
+  form.querySelector('[name="timeFrom"]').value = task.timeFrom || '';
+  form.querySelector('[name="timeTo"]').value = task.timeTo || '';
 
-  updateTimeDisplay(form.querySelector('.time-display'), task.timeFrom || '', task.timeTo || '');
   hideTimeError(form);
   setFormMode(form, type, 'edit');
   form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -332,10 +300,6 @@ function renderTasks(type) {
 function setupForm(form) {
   const type = form.dataset.type;
 
-  form.querySelector('.btn-time-ok').addEventListener('click', () => {
-    confirmTime(form, type);
-  });
-
   form.querySelector('.btn-cancel').addEventListener('click', () => {
     resetForm(form, type);
   });
@@ -343,7 +307,10 @@ function setupForm(form) {
   form.addEventListener('submit', e => {
     e.preventDefault();
 
-    const validation = validateTimeRange(formState[type].timeFrom, formState[type].timeTo);
+    const timeFrom = form.querySelector('[name="timeFrom"]').value;
+    const timeTo = form.querySelector('[name="timeTo"]').value;
+    const validation = validateTimeRange(timeFrom, timeTo);
+
     if (!validation.valid) {
       showTimeError(form, validation.message);
       return;

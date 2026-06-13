@@ -174,41 +174,8 @@ header h1 {
   margin-bottom: 0;
 }
 
-.time-block {
-  margin-bottom: 12px;
-  min-width: 0;
-}
-
-.time-block .form-row-group {
-  margin-bottom: 10px;
-}
-
-.btn-time-ok {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  background: var(--btn-bg);
-  color: var(--text);
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.btn-time-ok:hover {
-  background: var(--btn-hover);
-}
-
-.time-display {
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: var(--accent);
-}
-
 .time-error {
-  margin-top: 8px;
+  margin-bottom: 12px;
   font-size: 0.85rem;
   color: #c62828;
 }
@@ -592,17 +559,6 @@ header h1 {
   .btn-add,
   .btn-cancel {
     flex: 1;
-  }
-
-  .btn-time-ok {
-    width: auto;
-    min-width: 100px;
-    align-self: flex-start;
-  }
-
-  .time-block {
-    display: flex;
-    flex-direction: column;
   }
 
   .theme-buttons {
