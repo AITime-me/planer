@@ -90,6 +90,73 @@ function validateTimeRange(timeFrom, timeTo) {
   return { valid: true };
 }
 
+function fillTimeSelect(select, unit) {
+  const placeholder = unit === 'hour' ? 'Ч' : 'М';
+  const max = unit === 'hour' ? 23 : 59;
+  let options = `<option value="">${placeholder}</option>`;
+
+  for (let i = 0; i <= max; i++) {
+    const value = String(i).padStart(2, '0');
+    options += `<option value="${value}">${value}</option>`;
+  }
+
+  select.innerHTML = options;
+}
+
+function initTimeSelects(form) {
+  fillTimeSelect(form.querySelector('[name="timeFromHour"]'), 'hour');
+  fillTimeSelect(form.querySelector('[name="timeFromMinute"]'), 'minute');
+  fillTimeSelect(form.querySelector('[name="timeToHour"]'), 'hour');
+  fillTimeSelect(form.querySelector('[name="timeToMinute"]'), 'minute');
+}
+
+function readTimeFromForm(form, prefix) {
+  const hour = form.querySelector(`[name="${prefix}Hour"]`).value;
+  const minute = form.querySelector(`[name="${prefix}Minute"]`).value;
+
+  if (!hour && !minute) {
+    return { valid: true, value: '' };
+  }
+
+  if (hour && minute) {
+    return { valid: true, value: `${hour}:${minute}` };
+  }
+
+  return {
+    valid: false,
+    message: 'Укажите и часы, и минуты или оставьте время пустым.'
+  };
+}
+
+function setTimeSelects(form, prefix, timeStr) {
+  const hourEl = form.querySelector(`[name="${prefix}Hour"]`);
+  const minuteEl = form.querySelector(`[name="${prefix}Minute"]`);
+
+  if (!timeStr) {
+    hourEl.value = '';
+    minuteEl.value = '';
+    return;
+  }
+
+  const [hour, minute] = timeStr.split(':');
+  hourEl.value = hour || '';
+  minuteEl.value = minute || '';
+}
+
+function validateFormTime(form) {
+  const timeFromResult = readTimeFromForm(form, 'timeFrom');
+  if (!timeFromResult.valid) {
+    return timeFromResult;
+  }
+
+  const timeToResult = readTimeFromForm(form, 'timeTo');
+  if (!timeToResult.valid) {
+    return timeToResult;
+  }
+
+  return validateTimeRange(timeFromResult.value, timeToResult.value);
+}
+
 function sortTasks(list) {
   list.sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
@@ -116,11 +183,9 @@ function groupTasksByDate(taskList) {
     }));
 }
 
-function buildTaskFromForm(form, type) {
+function buildTaskFromForm(form, type, timeFrom, timeTo) {
   const data = new FormData(form);
   const date = data.get('date');
-  const timeFrom = data.get('timeFrom') || '';
-  const timeTo = data.get('timeTo') || '';
   const state = formState[type];
 
   return {
@@ -214,8 +279,8 @@ function startEdit(type, task) {
   form.querySelector('[name="title"]').value = task.title;
   form.querySelector('[name="date"]').value = task.date;
   form.querySelector('[name="priority"]').value = task.priority;
-  form.querySelector('[name="timeFrom"]').value = task.timeFrom || '';
-  form.querySelector('[name="timeTo"]').value = task.timeTo || '';
+  setTimeSelects(form, 'timeFrom', task.timeFrom || '');
+  setTimeSelects(form, 'timeTo', task.timeTo || '');
 
   hideTimeError(form);
   setFormMode(form, type, 'edit');
@@ -300,6 +365,8 @@ function renderTasks(type) {
 function setupForm(form) {
   const type = form.dataset.type;
 
+  initTimeSelects(form);
+
   form.querySelector('.btn-cancel').addEventListener('click', () => {
     resetForm(form, type);
   });
@@ -307,17 +374,16 @@ function setupForm(form) {
   form.addEventListener('submit', e => {
     e.preventDefault();
 
-    const timeFrom = form.querySelector('[name="timeFrom"]').value;
-    const timeTo = form.querySelector('[name="timeTo"]').value;
-    const validation = validateTimeRange(timeFrom, timeTo);
-
+    const validation = validateFormTime(form);
     if (!validation.valid) {
       showTimeError(form, validation.message);
       return;
     }
 
     hideTimeError(form);
-    const task = buildTaskFromForm(form, type);
+    const timeFrom = readTimeFromForm(form, 'timeFrom').value;
+    const timeTo = readTimeFromForm(form, 'timeTo').value;
+    const task = buildTaskFromForm(form, type, timeFrom, timeTo);
 
     if (formState[type].editingId) {
       updateTask(type, task);

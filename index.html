@@ -30,13 +30,21 @@
           <input type="date" name="date" required>
         </div>
         <div class="form-row-group">
-          <div class="form-row">
+          <div class="form-row time-row">
             <label>Время с</label>
-            <input type="time" name="timeFrom">
+            <div class="time-selects">
+              <select name="timeFromHour" class="time-select" aria-label="Часы, время с"></select>
+              <span class="time-separator">:</span>
+              <select name="timeFromMinute" class="time-select" aria-label="Минуты, время с"></select>
+            </div>
           </div>
-          <div class="form-row">
+          <div class="form-row time-row">
             <label>Время до</label>
-            <input type="time" name="timeTo">
+            <div class="time-selects">
+              <select name="timeToHour" class="time-select" aria-label="Часы, время до"></select>
+              <span class="time-separator">:</span>
+              <select name="timeToMinute" class="time-select" aria-label="Минуты, время до"></select>
+            </div>
           </div>
         </div>
         <p class="time-error" hidden role="alert"></p>
@@ -74,13 +82,21 @@
           <input type="date" name="date" required>
         </div>
         <div class="form-row-group">
-          <div class="form-row">
+          <div class="form-row time-row">
             <label>Время с</label>
-            <input type="time" name="timeFrom">
+            <div class="time-selects">
+              <select name="timeFromHour" class="time-select" aria-label="Часы, время с"></select>
+              <span class="time-separator">:</span>
+              <select name="timeFromMinute" class="time-select" aria-label="Минуты, время с"></select>
+            </div>
           </div>
-          <div class="form-row">
+          <div class="form-row time-row">
             <label>Время до</label>
-            <input type="time" name="timeTo">
+            <div class="time-selects">
+              <select name="timeToHour" class="time-select" aria-label="Часы, время до"></select>
+              <span class="time-separator">:</span>
+              <select name="timeToMinute" class="time-select" aria-label="Минуты, время до"></select>
+            </div>
           </div>
         </div>
         <p class="time-error" hidden role="alert"></p>
