@@ -505,6 +505,49 @@ header h1 {
   font-size: 0.9rem;
 }
 
+/* Архив */
+.archive-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+}
+
+.archive-panel h2 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+}
+
+.archive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.archive-item {
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.archive-item-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.archive-item-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
 /* Переключатель темы */
 .theme-switcher {
   margin-top: auto;

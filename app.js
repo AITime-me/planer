@@ -12,6 +12,8 @@ let tasks = {
   future: []
 };
 
+let archive = [];
+
 const formState = {
   current: { editingId: null },
   future: { editingId: null }
@@ -25,6 +27,7 @@ function loadData() {
   normalizeTasks();
   promoteFutureTasks();
   saveData();
+  loadArchive();
 
   const theme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
@@ -60,6 +63,64 @@ function normalizeTasks() {
 
 function saveData() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function loadArchive() {
+  const saved = localStorage.getItem('archive');
+  archive = saved ? JSON.parse(saved) : [];
+  if (!Array.isArray(archive)) {
+    archive = [];
+  }
+}
+
+function saveArchive() {
+  localStorage.setItem('archive', JSON.stringify(archive));
+}
+
+function sortArchive() {
+  archive.sort((a, b) => {
+    if (a.completedDate !== b.completedDate) {
+      return b.completedDate.localeCompare(a.completedDate);
+    }
+    return a.title.localeCompare(b.title, 'ru');
+  });
+}
+
+function addToArchive(task) {
+  if (archive.some(item => item.id === task.id)) {
+    return;
+  }
+
+  archive.push({
+    id: task.id,
+    title: task.title,
+    completedDate: getTodayDateStr()
+  });
+  sortArchive();
+  saveArchive();
+}
+
+function removeFromArchive(taskId) {
+  const nextArchive = archive.filter(item => item.id !== taskId);
+  if (nextArchive.length === archive.length) {
+    return;
+  }
+  archive = nextArchive;
+  saveArchive();
+}
+
+function filterArchive(query) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) {
+    return archive;
+  }
+
+  return archive.filter(item => {
+    const titleMatch = item.title.toLowerCase().includes(normalizedQuery);
+    const dateMatch = item.completedDate.includes(normalizedQuery)
+      || formatDate(item.completedDate).includes(normalizedQuery);
+    return titleMatch || dateMatch;
+  });
 }
 
 function getTodayDateStr() {
@@ -290,9 +351,19 @@ function deleteTask(type, id) {
 function toggleTaskComplete(type, id) {
   const task = tasks[type].find(item => item.id === id);
   if (!task) return;
+
+  const wasCompleted = task.completed;
   task.completed = !task.completed;
+
+  if (task.completed && !wasCompleted) {
+    addToArchive(task);
+  } else if (!task.completed && wasCompleted) {
+    removeFromArchive(task.id);
+  }
+
   saveData();
   renderTasks(type);
+  renderArchive();
 }
 
 function showTimeError(form, message) {
@@ -425,6 +496,32 @@ function renderTasks(type) {
   });
 }
 
+function renderArchive() {
+  const container = document.getElementById('archive-list');
+  const searchInput = document.getElementById('archive-search');
+  const query = searchInput ? searchInput.value : '';
+  const items = filterArchive(query);
+
+  container.innerHTML = '';
+
+  if (items.length === 0) {
+    container.innerHTML = query.trim()
+      ? '<p class="empty-message">Ничего не найдено</p>'
+      : '<p class="empty-message">Архив пуст</p>';
+    return;
+  }
+
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'archive-item';
+    div.innerHTML = `
+      <div class="archive-item-title">${escapeHtml(item.title)}</div>
+      <div class="archive-item-date">Выполнено: ${formatDate(item.completedDate)} (${getDayOfWeek(item.completedDate)})</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
 function setupForm(form) {
   const type = form.dataset.type;
 
@@ -479,6 +576,9 @@ document.querySelectorAll('.theme-btn').forEach(btn => {
   });
 });
 
+document.getElementById('archive-search').addEventListener('input', renderArchive);
+
 loadData();
 renderTasks('current');
 renderTasks('future');
+renderArchive();

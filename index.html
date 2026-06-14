@@ -15,6 +15,7 @@
     <nav class="tabs">
       <button class="tab active" data-tab="current">Текущие задачи</button>
       <button class="tab" data-tab="future">План на будущее</button>
+      <button class="tab" data-tab="archive">Архив</button>
     </nav>
 
     <!-- Вкладка: Текущие задачи -->
@@ -118,6 +119,18 @@
       <div class="task-list" id="list-future">
         <h2>Задачи</h2>
         <div id="tasks-future" class="tasks"></div>
+      </div>
+    </section>
+
+    <!-- Вкладка: Архив -->
+    <section id="archive" class="tab-content">
+      <div class="archive-panel">
+        <h2>Архив выполненных задач</h2>
+        <div class="form-row">
+          <label for="archive-search">Поиск</label>
+          <input type="search" id="archive-search" placeholder="Название или дата выполнения">
+        </div>
+        <div id="archive-list" class="archive-list"></div>
       </div>
     </section>
 
