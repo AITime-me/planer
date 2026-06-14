@@ -24,10 +24,11 @@ function loadData() {
   if (saved) {
     tasks = JSON.parse(saved);
   }
+  loadArchive();
   normalizeTasks();
+  archiveCompletedTasks();
   promoteFutureTasks();
   saveData();
-  loadArchive();
 
   const theme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
@@ -46,13 +47,36 @@ function normalizeTasks() {
     }
 
     tasks[type] = tasks[type].map(task => {
+      const completed = Boolean(task.completed);
+      let completedDate = task.completedDate || '';
+
       if (task.completed === undefined) {
         changed = true;
       }
-      return {
+
+      if (completed && !completedDate) {
+        const archivedItem = archive.find(item => item.id === task.id);
+        completedDate = archivedItem?.completedDate || getTodayDateStr();
+        changed = true;
+      }
+
+      if (!completed && completedDate) {
+        completedDate = '';
+        changed = true;
+      }
+
+      const normalized = {
         ...task,
-        completed: Boolean(task.completed)
+        completed
       };
+
+      if (completedDate) {
+        normalized.completedDate = completedDate;
+      } else {
+        delete normalized.completedDate;
+      }
+
+      return normalized;
     });
   });
 
@@ -88,16 +112,45 @@ function sortArchive() {
 
 function addToArchive(task) {
   if (archive.some(item => item.id === task.id)) {
-    return;
+    return false;
   }
 
   archive.push({
     id: task.id,
     title: task.title,
-    completedDate: getTodayDateStr()
+    completedDate: task.completedDate
   });
   sortArchive();
-  saveArchive();
+  return true;
+}
+
+function archiveCompletedTasks() {
+  const today = getTodayDateStr();
+  let changed = false;
+
+  ['current', 'future'].forEach(type => {
+    const remaining = [];
+
+    tasks[type].forEach(task => {
+      if (task.completed && task.completedDate && task.completedDate < today) {
+        addToArchive(task);
+        changed = true;
+      } else {
+        remaining.push(task);
+      }
+    });
+
+    if (remaining.length !== tasks[type].length) {
+      tasks[type] = remaining;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    saveArchive();
+  }
+
+  return changed;
 }
 
 function removeFromArchive(taskId) {
@@ -309,8 +362,11 @@ function buildTaskFromForm(form, type, timeFrom, timeTo) {
   const data = new FormData(form);
   const date = data.get('date');
   const state = formState[type];
+  const existing = state.editingId
+    ? tasks[type].find(task => task.id === state.editingId)
+    : null;
 
-  return {
+  const task = {
     id: state.editingId || Date.now(),
     title: data.get('title').trim(),
     date,
@@ -318,10 +374,14 @@ function buildTaskFromForm(form, type, timeFrom, timeTo) {
     timeFrom,
     timeTo,
     priority: data.get('priority'),
-    completed: state.editingId
-      ? Boolean(tasks[type].find(task => task.id === state.editingId)?.completed)
-      : false
+    completed: existing ? Boolean(existing.completed) : false
   };
+
+  if (existing?.completed && existing.completedDate) {
+    task.completedDate = existing.completedDate;
+  }
+
+  return task;
 }
 
 function addTask(type, task) {
@@ -356,14 +416,15 @@ function toggleTaskComplete(type, id) {
   task.completed = !task.completed;
 
   if (task.completed && !wasCompleted) {
-    addToArchive(task);
+    task.completedDate = getTodayDateStr();
   } else if (!task.completed && wasCompleted) {
+    delete task.completedDate;
     removeFromArchive(task.id);
+    renderArchive();
   }
 
   saveData();
   renderTasks(type);
-  renderArchive();
 }
 
 function showTimeError(form, message) {
@@ -516,7 +577,7 @@ function renderArchive() {
     div.className = 'archive-item';
     div.innerHTML = `
       <div class="archive-item-title">${escapeHtml(item.title)}</div>
-      <div class="archive-item-date">Выполнено: ${formatDate(item.completedDate)} (${getDayOfWeek(item.completedDate)})</div>
+      <div class="archive-item-date">${formatDate(item.completedDate)}</div>
     `;
     container.appendChild(div);
   });
